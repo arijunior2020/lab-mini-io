@@ -4,4 +4,6 @@
 *.tfplan
 *.terraform
 *.zip
-
+.terraform.lock.hcl
+.terraform.tfstate
+main.tf
