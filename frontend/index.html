@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload de Arquivo</title>
+    <style>
+        /* Estilos gerais para centralizar o conteúdo */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+        }
+
+        /* Container para o formulário */
+        .upload-container {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        /* Título */
+        h1 {
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        /* Estilo do botão de upload */
+        .file-input {
+            display: none;
+        }
+
+        .custom-file-label {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            color: #333;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 1rem;
+        }
+
+        .custom-file-label:hover {
+            background-color: #d5d5d5;
+        }
+
+        /* Estilo do botão de envio */
+        .upload-button {
+            padding: 0.75rem 1.5rem;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .upload-button:hover {
+            background-color: #45a049;
+        }
+
+        /* Mensagem de resposta */
+        #responseMessage {
+            margin-top: 1rem;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="upload-container">
+        <h1>Upload de Arquivo</h1>
+        <form id="uploadForm">
+            <label for="fileInput" class="custom-file-label">Escolher Arquivo</label>
+            <input type="file" id="fileInput" class="file-input" name="file" required>
+            <button type="submit" class="upload-button">Upload</button>
+        </form>
+        <p id="responseMessage"></p>
+    </div>
+
+    <script>
+        // Mostrar o nome do arquivo selecionado
+        document.getElementById('fileInput').addEventListener('change', function () {
+            const label = document.querySelector('.custom-file-label');
+            label.textContent = this.files[0] ? this.files[0].name : 'Escolher Arquivo';
+        });
+
+        document.getElementById('uploadForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('http://54.167.245.0:5000/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                const responseMessage = document.getElementById('responseMessage');
+                if (response.ok) {
+                    responseMessage.innerText = result.message;
+                    responseMessage.style.color = "green";
+                } else {
+                    responseMessage.innerText = result.error;
+                    responseMessage.style.color = "red";
+                }
+            } catch (error) {
+                const responseMessage = document.getElementById('responseMessage');
+                responseMessage.innerText = 'Erro ao enviar o arquivo';
+                responseMessage.style.color = "red";
+            }
+        });
+    </script>
+</body>
+</html>
